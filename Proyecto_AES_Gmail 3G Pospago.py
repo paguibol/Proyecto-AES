@@ -29,10 +29,7 @@ print(r"""
                                                             .;+;.......................;+;:.                                                                                                                                                       
 """)
 time.sleep(3)
-
-
-
-
+#prueba
 
 def destination():
     if len(sys.argv) > 1:
