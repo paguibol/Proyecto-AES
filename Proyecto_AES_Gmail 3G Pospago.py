@@ -30,6 +30,10 @@ print(r"""
 """)
 time.sleep(3)
 
+
+
+
+
 def destination():
     if len(sys.argv) > 1:
         return sys.argv[1]
