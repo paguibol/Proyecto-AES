@@ -98,7 +98,15 @@ def take_screenshot(d, prefix="screenshot"):
 # Ejemplo de llamar a la funcion en cada programa: write_time_to_Excel_2_columns(i+1, current_time, col_a="C", col_b="D", start_row=36, NW="4G")    # col_a =columna a iniciar ;fila; pestaña del excel en cual tecnologia Señalización_3G o ...4G 
 
 
-def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row, NW):
+def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row, NW, total_reps):
+    #checar ruta, yo tengo otra version
+    #if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+    #    ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    #else:
+    #    ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+
+
+
     ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
     nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
     path_completo = os.path.join(ruta_base, nombre_archivo)
@@ -128,6 +136,24 @@ def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row,
         wb.save(path_completo)
         print(f"Guardado en {col_final}{fila_destino}: {timestamp}")
 
+
+
+
+        # --- LÓGICA DE RETORNO HORA INICIO Y FIN ---
+        if iteration == 1:           # Si es la primera iteración, regresamos el timestamp para guardarlo fuera
+            return "PRIMERA", timestamp
+        
+        elif iteration == total_reps:      # Si es la última iteración, regresamos el timestamp
+            return "ULTIMA", timestamp
+        
+        return None                        # Si es una iteración intermedia, regresa None (nada) 
+    
+
+
+
+
+
+
     except Exception as e:
         print(f"Error al acceder al Excel, cierre el excel y guardelo con el nombre correcto en la carpeta - Pruebas_Homologacion_PS_3G_4G : {e}")
 
@@ -136,7 +162,15 @@ def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row,
 # Ejemplo de llamar a la funcion en cada programa:     write_time_to_Excel_1_column(i+1, current_time, col="T", start_row=36, NW="3G")
 
 
-def write_time_to_Excel_1_column(iteration, timestamp, col, start_row, NW):
+def write_time_to_Excel_1_column(iteration, timestamp, col, start_row, NW, total_reps):
+    #Chechar ruta, yo tengo otra version
+    #if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+    #    ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    #else:
+    #    ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+
+
+    
     ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
     nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
     path_completo = os.path.join(ruta_base, nombre_archivo)
@@ -159,10 +193,69 @@ def write_time_to_Excel_1_column(iteration, timestamp, col, start_row, NW):
         wb.save(path_completo)
         print(f"[{nombre_hoja}] Guardado en {col_final}{fila_destino}: {timestamp}")
 
+
+
+        # --- NUEVA LÓGICA DE RETORNO ---
+        if iteration == 1:           # Si es la primera iteración, regresamos el timestamp para guardarlo fuera
+            return "PRIMERA", timestamp
+        
+        elif iteration == total_reps:      # Si es la última iteración, regresamos el timestamp
+            return "ULTIMA", timestamp
+        
+        return None                        # Si es una iteración intermedia, regresa None (nada) 
+
+
+
+
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo '{nombre_archivo}' en la carpeta: {ruta_base}")
+    except PermissionError:
+        print(f"Error: No se pudo guardar. Cierra el archivo Excel antes de ejecutar.")
+
     except Exception as e:
         print(f"Error al acceder al Excel (Cierre el excel o guardelo en la carpeta con el nombre correcto - Pruebas_Homologacion_PS_3G_4G ): {e}")
 
 
 
+
+
+def write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="C", col_d="D", start_row=21, NW="3G"):  
+    
+    
+    if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+        ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    else:
+        ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+
+    nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
+    path_completo = os.path.join(ruta_base, nombre_archivo)
+
+    try:
+        wb = openpyxl.load_workbook(path_completo)
+        nombre_hoja = f"Señalización_{NW}"
+        
+        if nombre_hoja in wb.sheetnames:
+            ws = wb[nombre_hoja]
+        else:
+            print(f"Error: No se encontró la pestaña '{nombre_hoja}' (verifique variable NW)")
+            return
+
+        # Escribir tiempo de inicio y fin en las columnas C y D respectivamente, en la fila 36 (o la que corresponda)
+        ws[f"{col_c}{start_row}"] = tiempo_inicio
+        ws[f"{col_d}{start_row}"] = tiempo_fin
+        wb.save(path_completo)
+        #print(f"[{nombre_hoja}] Guardado tiempo de inicio en {col_c}{start_row}: {tiempo_inicio}")
+        #print(f"[{nombre_hoja}] Guardado tiempo de fin en {col_d}{start_row}: {tiempo_fin}")
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo '{nombre_archivo}' en la carpeta: {ruta_base}")
+    except PermissionError:
+        print(f"Error: No se pudo guardar. Cierra el archivo Excel antes de ejecutar.")
+
+    except Exception as e:
+        print(f"Error al acceder al Excel (Cierre el excel o guardelo en la carpeta con el nombre correcto - Pruebas_Homologacion_PS_3G_4G ): {e}")
+
+    
 
 
