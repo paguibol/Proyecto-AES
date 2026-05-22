@@ -2,13 +2,14 @@ import subprocess
 from time import sleep
 from datetime import datetime
 import os
+import sys
 import openpyxl  #Libreria para manejar archivos Excel, para guardar los resultados de las pruebas
 from openpyxl import Workbook
 
 
 
 DEFAULTS = {
-    "MMS_REPS":       5,  #20
+    "MMS_REPS":       2,  #20
     "MMS_INTERVAL":   60, #60
     "INTERNET_REPS":  5,  #5
     "INTERNET_INTERVAL": 60,#60
@@ -100,14 +101,14 @@ def take_screenshot(d, prefix="screenshot"):
 
 def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row, NW, total_reps):
     #checar ruta, yo tengo otra version
-    #if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
-    #    ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
-    #else:
-    #    ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+    if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+        ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    else:
+        ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
 
 
 
-    ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
+    #ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
     nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
     path_completo = os.path.join(ruta_base, nombre_archivo)
 
@@ -150,13 +151,14 @@ def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row,
     
 
 
-
-
-
-
+    
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo '{nombre_archivo}' en la carpeta: {ruta_base}")
+    except PermissionError:
+        print(f"Error: No se pudo guardar. Cierra el archivo Excel antes de ejecutar.")
+    
     except Exception as e:
         print(f"Error al acceder al Excel, cierre el excel y guardelo con el nombre correcto en la carpeta - Pruebas_Homologacion_PS_3G_4G : {e}")
-
 
 ######### Función, guardar la hora en Excel, en la hoja "Señalización_3G" o "Señalización_4G"para 1 columnas (Internet, youtube, MMS (prepago sin balance), ...)
 # Ejemplo de llamar a la funcion en cada programa:     write_time_to_Excel_1_column(i+1, current_time, col="T", start_row=36, NW="3G")
@@ -164,14 +166,14 @@ def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row,
 
 def write_time_to_Excel_1_column(iteration, timestamp, col, start_row, NW, total_reps):
     #Chechar ruta, yo tengo otra version
-    #if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
-    #    ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
-    #else:
-    #    ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+    if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+        ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    else:
+        ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
 
 
     
-    ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
+    #ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
     nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
     path_completo = os.path.join(ruta_base, nombre_archivo)
 
@@ -220,7 +222,7 @@ def write_time_to_Excel_1_column(iteration, timestamp, col, start_row, NW, total
 
 
 
-def write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="C", col_d="D", start_row=21, NW="3G"):  
+def write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c, col_d, start_row, NW):  
     
     
     if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
