@@ -3,7 +3,7 @@ import time
 from time import sleep
 from datetime import datetime
 import uiautomator2 as u2
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info
 
 print(r"""
  __     __  ___  __     __   ___      _____   ___   _____   _       ____      _____   _____   ____    _____ 
@@ -111,6 +111,9 @@ def chrome_news(d, repetitions=5, interval=60):
     now = time.time()
     start_time = ((int(now) // interval) + 1) * interval
 
+    tiempo_inicio = None     # Variable para almacenar el timestamp de la primera iteración que se escriba en Excel
+    tiempo_fin = None     # Variable para almacenar el timestamp de la última iteración que se escriba en Excel
+
     for i in range(repetitions):
         target = start_time + i * interval
         wait = target - time.time()
@@ -121,9 +124,23 @@ def chrome_news(d, repetitions=5, interval=60):
         current_time = datetime.now().strftime('%I:%M %p') ##### Obtener timestamp actual para guardar en Excel
 
 
-        print(f"Internet test #{i+1} starting at {datetime.now().strftime(current_time)}")
 
-        write_time_to_Excel_1_column(i+1, current_time, col="G", start_row=36, NW="3G")                #Escribe en Excel, pasar en que columna, fila y RAT empieza a escribir. Pospago celda =G36; Prepago con saldo celda = O36; prepago sin saldo celda= T56 
+        print(f"Internet test #{i+1} starting at {datetime.now().strftime(current_time)}")
+        resultado = write_time_to_Excel_1_column(i+1, current_time, col="T", start_row=56, NW="4G", total_reps=repetitions)                #Escribe en Excel, pasar en que columna, fila y RAT empieza a escribir. Pospago celda =G36; Prepago con saldo celda = O36; prepago sin saldo celda= T56 
+
+
+        if resultado is not None:             #Buble para determinar el tiempo de la primera y última iteración, resultado es una tupla (tipo, timestamp) donde tipo es "PRIMERA" o "ULTIMA" y timestamp es la hora en que se escribió en Excel
+            tipo, ts = resultado       # Desempaquetamos la tupla (Ej: "PRIMERA", "06:14 PM")
+            if tipo == "PRIMERA":
+                tiempo_inicio = ts
+            elif tipo == "ULTIMA":
+                tiempo_fin = ts
+
+        write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="G", col_d="H", start_row=22, NW="4G")  # Escribe en Excel el tiempo de la primera y última iteración del test, en las columnas C y D respectivamente, para la tecnología 3G. 
+    
+
+
+
 
 
         d.app_start("com.android.chrome")
@@ -156,6 +173,9 @@ def main():
     take_log(d)
     open_settings(d)
     chrome_news(d, repetitions=reps, interval=interval)
+            
+    fill_excel_with_basic_info(NW="4G")  #Llena en el excel el modelo y la fecha 
+
     close_settings(d)
     close_log(d)
     print("All repetitions completed. Exiting program.")

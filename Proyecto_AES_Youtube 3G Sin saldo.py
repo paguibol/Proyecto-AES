@@ -3,7 +3,7 @@ from time import sleep
 from datetime import datetime
 import os
 import uiautomator2 as u2
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info
 
 print(r"""
  ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
@@ -104,6 +104,12 @@ def close_settings(d):
 def youtube(d, repetitions=10, interval=60):
     now = time.time()
     start_time = ((int(now) // interval) + 1) * interval
+    
+    tiempo_inicio = None
+    tiempo_fin = None
+
+
+
     for i in range(repetitions):
         target = start_time + i * interval
         wait = target - time.time()
@@ -111,11 +117,22 @@ def youtube(d, repetitions=10, interval=60):
             time.sleep(wait)
         iter_start = time.time()
         current_time = datetime.now().strftime('%I:%M %p') 
-
+        
+        
         print(f"YouTube test #{i+1} starting at {datetime.now().strftime(current_time)}")
+        resultado = write_time_to_Excel_1_column(i+1, current_time, col="T", start_row=76, NW="3G", total_reps=repetitions)          #Escribe en Excel, pasar en que columna, fila y RAT empieza a escribir. Pospago celda =C49; Prepago con saldo celda = K49;  
 
-        write_time_to_Excel_1_column(i+1, current_time, col="C", start_row=49, NW="3G")          #Escribe en Excel, pasar en que columna, fila y RAT empieza a escribir. Pospago celda =C49; Prepago con saldo celda = K49;  
 
+
+        if resultado is not None:             #Buble para determinar el tiempo de la primera y última iteración, resultado es una tupla (tipo, timestamp) donde tipo es "PRIMERA" o "ULTIMA" y timestamp es la hora en que se escribió en Excel
+            tipo, ts = resultado       # Desempaquetamos la tupla (Ej: "PRIMERA", "06:14 PM")
+            if tipo == "PRIMERA":
+                tiempo_inicio = ts
+            elif tipo == "ULTIMA":
+                tiempo_fin = ts
+
+        write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="G", col_d="H", start_row=23, NW="3G")  # Escribe en Excel el tiempo de la primera y última iteración del test, en las columnas C y D respectivamente, para la tecnología 3G. 
+    
 
         d.app_start("com.google.android.youtube")
         sleep(2)
@@ -142,6 +159,9 @@ def main():
     take_log(d)
     open_settings(d)
     youtube(d, repetitions=reps, interval=interval)
+        
+    fill_excel_with_basic_info(NW="3G")  #Llena en el excel el modelo y la fecha 
+
     sleep(5)
     close_settings(d)
     close_log(d)
