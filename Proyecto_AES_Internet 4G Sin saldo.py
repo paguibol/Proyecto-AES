@@ -155,10 +155,13 @@ def chrome_news(d, repetitions=5, interval=60):
             continue
 
         sleep(7)
-        take_screenshot(d, prefix=f"Internet_Test_{i+1}")
-        sleep(5)
-        go_home(d)
-        d.app_stop("com.android.chrome")
+        if i == 4:
+            sleep(2)
+            take_screenshot(d)
+            sleep(5)
+        else:
+            d.app_stop("com.android.chrome")
+            go_home(d)
         elapsed = time.time() - iter_start
     print("chrome_news schedule finished.")
 

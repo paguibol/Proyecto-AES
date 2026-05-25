@@ -80,7 +80,7 @@ def close_log(d):
     d(resourceId="com.android.bbklog:id/title").click()
     sleep(2)
     d(resourceId="android:id/edit").wait(timeout=10)
-    d(resourceId="android:id/edit").set_text("MMS_4G_Sin saldo")
+    d(resourceId="android:id/edit").set_text("MMS_4G_Sin saldo") #Escribir el nombre del log guardado
     sleep(2)
     d(resourceId="android:id/button1").wait(timeout=10)
     d(resourceId="android:id/button1").click()
@@ -103,7 +103,7 @@ def close_settings(d):
     d(resourceId="android:id/title", text="Más conexiones").click_exists(timeout=5)
     sleep(4)
     d(description="Modo avión").click()
-    sleep(2)#
+    sleep(2)
     d.app_stop("com.android.settings")
 
 
@@ -243,17 +243,11 @@ def main():
     reps     = get_cfg("MMS_REPS")
     d = u2.connect()
     phone_number = destination()
-#    open_bbklogs(d)
-#    take_log(d)
+    open_bbklogs(d)
+    take_log(d)
     open_settings(d)   
     mms(phone_number, repetitions=reps, interval=interval)
-    
-        
-    
     fill_excel_with_basic_info(NW="4G")  #llena en el excel el modelo y la fecha
-
-    
-    
     close_settings(d)
     close_log(d)
     print("All repetitions completed. Exiting program.")

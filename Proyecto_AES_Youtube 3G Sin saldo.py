@@ -43,11 +43,15 @@ def goto_start_record(d):
     sleep(3)
     if d(resourceId="com.android.bbklog:id/log_record_start_btn").wait(timeout=10):
         d(resourceId="com.android.bbklog:id/log_record_start_btn").click()
-        sleep(10)
-        go_home(d)
-    else:
-        print("take_log: Start recording button not found.")
-
+        sleep(5)
+        if i == 4:
+            go_back(d)
+            sleep(2)
+            take_screenshot(d)
+            sleep(5)
+        else:
+            d.app_stop("com.google.android.youtube")
+            go_home(d)
 def close_log(d):
     try:
         open_bbklogs(d)
@@ -142,7 +146,7 @@ def youtube(d, repetitions=10, interval=60):
 
         d.swipe_ext("up", scale=0.2)
         sleep(5)
-        take_screenshot(d, prefix=f"youtube_{i+1}")
+        take_screenshot(d)
         sleep(5)
         go_home(d)
         d.app_stop("com.google.android.youtube")

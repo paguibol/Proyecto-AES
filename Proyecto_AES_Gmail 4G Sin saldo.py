@@ -177,10 +177,13 @@ def Gmail(d, destination_email, repetitions=20, interval=60):
             continue
 
         sleep(5)
-        take_screenshot(d, prefix=f"Gmail_Test_{i+1}")
-        sleep(5)
-        go_home(d)
-        d.app_stop("com.google.android.gm")
+        if i == 4:
+            sleep(2)
+            take_screenshot(d)
+            sleep(5)
+        else:
+            d.app_stop("com.google.android.gm")
+            go_home(d)
 
         elapsed = time.time() - iter_start
     print("Gmail schedule finished.")

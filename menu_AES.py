@@ -41,6 +41,14 @@ def main():
         balance = choose("Elige tipo de saldo:", BALANCES)
         test = choose("Elige la prueba:", TESTS)
 
+        # Map balance display names to AES_MODE values used by common.get_cfg()
+        balance_map = {"Prepago": "PREPAGO", "Pospago": "POSPAGO", "Sin saldo": "SIN_SALDO"}
+        aes_mode = balance_map.get(balance, balance.upper())
+        env = os.environ.copy()
+        env["AES_MODE"] = aes_mode
+        # Also export network so child scripts can read it if needed
+        env["AES_NETWORK"] = network
+
         if test == "Run all":
             run_filename = build_filename_all(network, balance)
             if not os.path.exists(run_filename):
@@ -48,7 +56,7 @@ def main():
             else:
                 print(f"Ejecutando: {run_filename}")
                 try:
-                    completed = subprocess.run([sys.executable, run_filename])
+                    completed = subprocess.run([sys.executable, run_filename], env=env)
                     print(f"{run_filename} terminado con código: {completed.returncode}")
                 except Exception as e:
                     print(f"Error al ejecutar {run_filename}: {e}")
@@ -59,7 +67,7 @@ def main():
             else:
                 print(f"Lanzando: {filename}")
                 try:
-                    completed = subprocess.run([sys.executable, filename])
+                    completed = subprocess.run([sys.executable, filename], env=env)
                     print(f"Terminado con código: {completed.returncode}")
                 except Exception as e:
                     print(f"Error al ejecutar {filename}: {e}")

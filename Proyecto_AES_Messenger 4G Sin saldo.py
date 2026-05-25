@@ -187,10 +187,13 @@ def Messenger(d, destination_contact, repetitions=20, interval=60):
             print("Search bar not found.")
 
         sleep(5)
-        take_screenshot(d, prefix=f"Messenger_Test_{i+1}")
-        sleep(5)
-        go_home(d)
-        d.app_stop("com.facebook.orca")
+        if i == 4:
+            sleep(2)
+            take_screenshot(d)
+            sleep(5)
+        else:
+            d.app_stop("com.facebook.orca")
+            go_home(d)
         elapsed = time.time() - iter_start
 
     print("Messenger schedule finished.")

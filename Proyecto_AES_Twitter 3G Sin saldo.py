@@ -277,10 +277,13 @@ def Twitter(d, repetitions=20, interval=60):
             print("No se encontró el botón Enviar.")
 
         sleep(10)
-        take_screenshot(d, prefix=f"Twitter_Test_{i+1}")
-        sleep(5)
-        go_home(d)
-        d.app_stop("com.twitter.android")
+        if i == 4:
+            sleep(2)
+            take_screenshot(d)
+            sleep(5)
+        else:
+            d.app_stop("com.twitter.android")
+            go_home(d)
     print("Twitter schedule finished.")
             
 def main():
