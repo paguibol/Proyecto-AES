@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 import openpyxl  #Libreria para manejar archivos Excel, para guardar los resultados de las pruebas
 from openpyxl import Workbook
+from menu_AES import build_filename_all, build_filename
 
 #Voy yo Aldo
 
@@ -51,7 +52,11 @@ def connection():
 
 def go_home(d):
     d.press("home")
-    sleep(1)
+    sleep(2)
+
+def go_back(d):
+    d.press("back")
+    sleep(2)
 
 
 def open_bbklogs(d):
@@ -86,9 +91,9 @@ def open_bbklogs(d):
     d.app_stop("com.google.android.dialer")
 
 def take_screenshot(d, prefix="screenshot"):
-    folder = os.path.join("logs", "screenshots 4G")
+    folder = os.path.join("logs", f"Screenshots Sin Saldo {datetime.now().strftime('%Y-%m-%d')}")
     os.makedirs(folder, exist_ok=True)
-    filename = f"{prefix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+    filename = f"{build_filename_all() or build_filename()}_{datetime.now().strftime('%Y-%m-%d')}.png"
     path = os.path.join(folder, filename)
     try:
         d.screenshot(path)

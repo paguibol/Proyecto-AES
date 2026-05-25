@@ -4,7 +4,7 @@ from datetime import datetime
 import uiautomator2 as u2
 import os
 import sys
-from common import adb, connection, go_home, open_bbklogs, take_screenshot, get_cfg, write_time_to_Excel_2_columns, write_time_to_Excel_1_column
+from common import adb, connection, go_home, open_bbklogs, take_screenshot, get_cfg, write_time_to_Excel_2_columns, write_time_to_Excel_1_column, go_back
 
 print(r"""
  ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
@@ -203,8 +203,12 @@ def mms(phone_number, repetitions=5, interval=60):
 
         finally:
             sleep(5)
-            take_screenshot(d, prefix=f"MMS_Test_{i+1}")
+        if i == 4:  
+            go_back(d)
+            sleep(2)
+            take_screenshot(d)
             sleep(5)
+        else:
             d.app_stop("com.google.android.apps.messaging")
             go_home(d)
 
@@ -215,8 +219,8 @@ def main():
     reps     = get_cfg("MMS_REPS")
     d = u2.connect()
     phone_number = destination()
-    open_bbklogs(d)
-    take_log(d)
+#    open_bbklogs(d)
+#    take_log(d)
     open_settings(d)   
     mms(phone_number, repetitions=reps, interval=interval)
     close_settings(d)
