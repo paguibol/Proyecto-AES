@@ -4,7 +4,7 @@ from datetime import datetime
 import uiautomator2 as u2
 import os
 import sys
-from common import adb, connection, go_home, open_bbklogs, take_screenshot, get_cfg, write_time_to_Excel_2_columns, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info
+from common import adb, connection, go_home, open_bbklogs, take_screenshot, get_cfg, write_time_to_Excel_2_columns, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM
 
 print(r"""
  ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
@@ -128,9 +128,6 @@ def mms(phone_number, repetitions=5, interval=60):
         iter_start = time.time()
         current_time = datetime.now().strftime('%I:%M %p') ##### Obtener timestamp actual para guardar en Excel
 
-
-
-
         print(f"MMS test #{i+1} started at {datetime.now().strftime(current_time)}")
         resultado =write_time_to_Excel_2_columns(i+1, current_time, col_a="C", col_b="D", start_row=36, NW="4G", total_reps=repetitions)    #Escribe en Excel, pasar en que columnas, fila y RAT empieza a escribir,   
 
@@ -144,9 +141,6 @@ def mms(phone_number, repetitions=5, interval=60):
 
         write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="C", col_d="D", start_row=21, NW="4G")  # Escribe en Excel el tiempo de la primera y última iteración del test, en las columnas C y D respectivamente, para la tecnología 4G. 
     
-
-
-
         try:
             d.app_start("com.google.android.apps.messaging")
             if not d(packageName="com.google.android.apps.messaging").wait(timeout=10):
@@ -234,11 +228,8 @@ def main():
     take_log(d)
     open_settings(d)   
     mms(phone_number, repetitions=reps, interval=interval)
-        
-
-    fill_excel_with_basic_info(NW="4G")  #Llena en el excel el modelo y la fecha
-
-
+    number_10_digits = get_number_SIM(d)
+    fill_excel_with_basic_info(NW="4G", SIM_number=number_10_digits, Linea ="Pospago")  #Llena en el excel el modelo y la fecha, en Línea colocar: "Pospago", "Prepago sin saldo" o "Prepago con saldo" dependiendo del tipo de línea que se esté probando
     close_settings(d)
     close_log(d)
     print("All repetitions completed. Exiting program.")

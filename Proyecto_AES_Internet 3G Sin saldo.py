@@ -3,7 +3,7 @@ import time
 from time import sleep
 from datetime import datetime
 import uiautomator2 as u2
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM
 
 print(r"""
  __     __  ___  __     __   ___      _____   ___   _____   _       ____      _____   _____   ____    _____ 
@@ -139,11 +139,6 @@ def chrome_news(d, repetitions=5, interval=60):
 
         write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="G", col_d="H", start_row=22, NW="3G")  # Escribe en Excel el tiempo de la primera y última iteración del test, en las columnas C y D respectivamente, para la tecnología 3G. 
     
-
-
-
-
-
         d.app_start("com.android.chrome")
         sleep(2)
         if d(resourceId="com.android.chrome:id/url_bar").exists:
@@ -174,9 +169,8 @@ def main():
     take_log(d)
     open_settings(d)
     chrome_news(d, repetitions=reps, interval=interval)
-        
-    fill_excel_with_basic_info(NW="3G")  #Llena en el excel el modelo y la fecha 
-
+    number_10_digits = get_number_SIM(d)
+    fill_excel_with_basic_info(NW="3G", SIM_number=number_10_digits, Linea ="Prepago sin saldo")  #Llena en el excel el modelo y la fecha, en Línea colocar: "Pospago", "Prepago sin saldo" o "Prepago con saldo" dependiendo del tipo de línea que se esté probando
     close_settings(d)
     close_log(d)
     print("All repetitions completed. Exiting program.")

@@ -3,7 +3,7 @@ from time import sleep
 from datetime import datetime
 import os
 import uiautomator2 as u2
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM
 
 print(r"""
  ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
@@ -120,8 +120,6 @@ def youtube(d, repetitions=10, interval=60):
         print(f"YouTube test #{i+1} starting at {datetime.now().strftime(current_time)}")
         resultado = write_time_to_Excel_1_column(i+1, current_time, col="T", start_row=76, NW="4G", total_reps=repetitions)          #Escribe en Excel, pasar en que columna, fila y RAT empieza a escribir. Pospago celda =C49; Prepago con saldo celda = K49;  
 
-
-
         if resultado is not None:             #Buble para determinar el tiempo de la primera y última iteración, resultado es una tupla (tipo, timestamp) donde tipo es "PRIMERA" o "ULTIMA" y timestamp es la hora en que se escribió en Excel
             tipo, ts = resultado       # Desempaquetamos la tupla (Ej: "PRIMERA", "06:14 PM")
             if tipo == "PRIMERA":
@@ -157,9 +155,8 @@ def main():
     take_log(d)
     open_settings(d)
     youtube(d, repetitions=reps, interval=interval)
-            
-    fill_excel_with_basic_info(NW="4G")  #Llena en el excel el modelo y la fecha 
-
+    number_10_digits = get_number_SIM(d)
+    fill_excel_with_basic_info(NW="4G", SIM_number=number_10_digits, Linea ="Prepago sin saldo")  #Llena en el excel el modelo y la fecha, en Línea colocar: "Pospago", "Prepago sin saldo" o "Prepago con saldo" dependiendo del tipo de línea que se esté probando
     sleep(5)
     close_settings(d)
     close_log(d)

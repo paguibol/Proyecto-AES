@@ -6,6 +6,7 @@ import sys
 import openpyxl  #Libreria para manejar archivos Excel, para guardar los resultados de las pruebas
 from openpyxl import Workbook
 
+
 #Voy yo Aldo
 
 #Hola soy Jaime Mausan y me gsutan los niños
@@ -266,7 +267,7 @@ def write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c, col_d, 
 
 #Función para llenar el Excel con información del modelo, fecha y posteriormente el numero de la SIM
 
-def fill_excel_with_basic_info(NW):  
+def fill_excel_with_basic_info(NW, SIM_number, Linea):  
     
 
     device_name = adb("shell getprop ro.product.model") #obtener el nombre del dispositivo para escribirlo en el Excel
@@ -295,15 +296,19 @@ def fill_excel_with_basic_info(NW):
             print(f"Error: No se encontró la pestaña '{nombre_hoja}' (verifique variable NW)")
             return
 
-
-
-        # 1. Escribir el Modelo en la celda B15
-        ws["B15"] = f"Modelo: {device_name}"
+        ws["B15"] = f"Modelo: {device_name}"#Escribir el Modelo en la celda B15
         
-        # 2. Escribir la Fecha de pruebas en la celda B16
-        ws["B16"] = f"Fecha de pruebas: {current_date}"
+        ws["B16"] = f"Fecha de pruebas: {current_date}" # Escribir la Fecha de pruebas en la celda B16
 
-
+        if Linea == "Pospago":
+            ws["F14"] = f"Línea Pospago: {SIM_number}"
+        elif Linea == "Prepago sin saldo":
+            ws["F15"] = f"Línea Prepago con saldo: {SIM_number}"
+        elif Linea == "Prepago con saldo":
+            ws["F16"] = f"Línea Prepago sin saldo: {SIM_number}"
+        else:
+            print("Error: Linea debe ser 'Pospago' o 'Prepago sin saldo' o 'Prepago con saldo' ")
+        
 
         wb.save(path_completo)
 
@@ -322,4 +327,18 @@ def fill_excel_with_basic_info(NW):
 
 
 
-
+def get_number_SIM(d):
+    d.app_start("com.android.settings")
+    sleep(2)
+    d(resourceId="android:id/title", text="Red móvil").click_exists(timeout=5)
+    sleep(2)
+    d(resourceId="com.android.phone:id/title", text="SIM 1").click_exists(timeout=5)
+    sleep(2)
+    d(resourceId="com.android.phone:id/title", text="Número de la tarjeta SIM").click_exists(timeout=5)
+    sleep(2)
+    complete_text = d(resourceId="com.android.phone:id/edit").get_text()
+    number_10_digits = complete_text[3:]
+    d.app_stop("com.android.settings")
+    #print(f"SIM number: {number_10_digits}")
+    d.app_stop("com.android.settings")
+    return number_10_digits

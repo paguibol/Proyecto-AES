@@ -3,7 +3,7 @@ import time
 from time import sleep
 from datetime import datetime
 import uiautomator2 as u2
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM
 
 print(r"""
  __     __  ___  __     __   ___      _____   ___   _____   _       ____      _____   _____   ____    _____ 
@@ -170,9 +170,8 @@ def main():
     take_log(d)
     open_settings(d)
     chrome_news(d, repetitions=reps, interval=interval)
-    
-    fill_excel_with_basic_info(NW="4G")  #Llena en el excel el modelo y la fecha 
-
+    number_10_digits = get_number_SIM(d)
+    fill_excel_with_basic_info(NW="4G", SIM_number=number_10_digits, Linea ="Pospago")  #Llena en el excel el modelo y la fecha, en Línea colocar: "Pospago", "Prepago sin saldo" o "Prepago con saldo" dependiendo del tipo de línea que se esté probando
     close_settings(d)
     close_log(d)
     print("All repetitions completed. Exiting program.")

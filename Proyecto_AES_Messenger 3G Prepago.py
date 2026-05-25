@@ -6,7 +6,7 @@ import os
 import sys
 import traceback
 import threading
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_2_columns, write_start_end_time_test_to_Excel,fill_excel_with_basic_info
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_2_columns, write_start_end_time_test_to_Excel,fill_excel_with_basic_info, get_number_SIM
 
 print(r"""
  ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
@@ -130,7 +130,6 @@ def Messenger(d, destination_contact, repetitions=20, interval=60):
     tiempo_inicio = None
     tiempo_fin = None
 
-
     for i in range(repetitions):
         target = start_time + i * interval
         wait = target - time.time()
@@ -153,8 +152,6 @@ def Messenger(d, destination_contact, repetitions=20, interval=60):
                 tiempo_fin = ts
 
         write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="E", col_d="F", start_row=25, NW="3G")  # Escribe en Excel el tiempo de la primera y última iteración del test, en las columnas C y D respectivamente, para la tecnología 3G. 
-    
-
 
         d.app_start("com.facebook.orca")
         sleep(3)
@@ -204,10 +201,8 @@ def main():
     take_log(d)
     open_settings(d)
     Messenger(d, destination_contact, repetitions=reps, interval=interval)
-
-    fill_excel_with_basic_info(NW="3G")  #Llena en el excel el modelo y la fecha 
-    
-
+    number_10_digits = get_number_SIM(d)
+    fill_excel_with_basic_info(NW="3G", SIM_number=number_10_digits, Linea ="Prepago con saldo")  #Llena en el excel el modelo y la fecha, en Línea colocar: "Pospago", "Prepago sin saldo" o "Prepago con saldo" dependiendo del tipo de línea que se esté probando
     close_settings(d)
     close_log(d)
     print("All repetitions completed. Exiting program.")
