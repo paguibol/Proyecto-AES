@@ -138,10 +138,13 @@ def youtube(d, repetitions=10, interval=60):
 
         d.swipe_ext("up", scale=0.2)
         sleep(5)
-        take_screenshot(d, prefix=f"youtube_{i+1}")
-        sleep(5)
-        go_home(d)
-        d.app_stop("com.google.android.youtube")
+        if i == 4:
+            sleep(2)
+            take_screenshot(d, prefix=f"youtube_{i+1}")
+            sleep(5)
+        else:
+            d.app_stop("com.google.android.youtube")
+            go_home(d)
     print("YouTube schedule finished.")
 
 def main():

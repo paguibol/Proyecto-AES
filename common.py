@@ -5,35 +5,55 @@ import os
 import sys
 import openpyxl  #Libreria para manejar archivos Excel, para guardar los resultados de las pruebas
 from openpyxl import Workbook
+from menu_AES import build_filename_all, build_filename
 
 
-#Voy yo Aldo
-
-#Hola soy Jaime Mausan y me gsutan los niños
-
-
-
-DEFAULTS = {
-    "MMS_REPS":       2,  #20
-    "MMS_INTERVAL":   60, #60
-    "INTERNET_REPS":  5,  #5
-    "INTERNET_INTERVAL": 60,#60
-    "YT_REPS":        5, #5
-    "YT_INTERVAL":    60, #60
-    "GMAIL_REPS":     5, #5
-    "GMAIL_INTERVAL": 60, #60
-    "TWITTER_REPS":   2,  #5
-    "TWITTER_INTERVAL": 60,  #60
-    "MESSENGER_REPS": 5,    #5 
-    "MESSENGER_INTERVAL": 60,  #60
-    
+# Mode-specific defaults. AES_MODE controls which set is active in a child process.
+DEFAULTS_BY_MODE = {
+    "SIN_SALDO": {
+        "MMS_REPS":       5,
+        "MMS_INTERVAL":   60,
+        "INTERNET_REPS":  5,
+        "INTERNET_INTERVAL": 60,
+        "YT_REPS":        5,
+        "YT_INTERVAL":    60,
+        "GMAIL_REPS":     5,
+        "GMAIL_INTERVAL": 60,
+        "TWITTER_REPS":   2,
+        "TWITTER_INTERVAL": 60,
+        "MESSENGER_REPS": 5,
+        "MESSENGER_INTERVAL": 60,
+    },
+    "PREPAGO": {
+        "MMS_REPS":       20,
+        "MMS_INTERVAL":   60,
+        "INTERNET_REPS":  10,
+        "INTERNET_INTERVAL": 60,
+        "YT_REPS":        10,
+        "YT_INTERVAL":    60,
+        "GMAIL_REPS":     20,
+        "GMAIL_INTERVAL": 60,
+        "TWITTER_REPS":   20,
+        "TWITTER_INTERVAL": 60,
+        "MESSENGER_REPS": 20,
+        "MESSENGER_INTERVAL": 60,
+    },
 }
+
+# POSPAGO same as PREPAGO by default
+DEFAULTS_BY_MODE["POSPAGO"] = DEFAULTS_BY_MODE["PREPAGO"]
+
+# Select active defaults based on AES_MODE env var at import time.
+_mode = os.environ.get("AES_MODE", "SIN_SALDO").upper()
+DEFAULTS = DEFAULTS_BY_MODE.get(_mode, DEFAULTS_BY_MODE["SIN_SALDO"]) 
+
 
 def get_cfg(key):
     try:
+        # environment variable overrides active defaults
         return int(os.environ.get(key, DEFAULTS[key]))
     except Exception:
-        return DEFAULTS[key]
+        return DEFAULTS.get(key)
 
 def adb(command):
     result = subprocess.run(["adb"] + command.split(), capture_output=True, text=True)
@@ -53,7 +73,11 @@ def connection():
 
 def go_home(d):
     d.press("home")
-    sleep(1)
+    sleep(2)
+
+def go_back(d):
+    d.press("back")
+    sleep(2)
 
 
 def open_bbklogs(d):
@@ -88,9 +112,61 @@ def open_bbklogs(d):
     d.app_stop("com.google.android.dialer")
 
 def take_screenshot(d, prefix="screenshot"):
-    folder = os.path.join("logs", "screenshots 4G")
-    os.makedirs(folder, exist_ok=True)
-    filename = f"{prefix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+    # Determine technology and network from environment or script name
+    script_base = None
+    try:
+        script_base = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+    except Exception:
+        script_base = prefix
+
+    # Known test names (prefer nicer capitalization)
+    tests_map = {
+        "mms": "MMS",
+        "internet": "Internet",
+        "youtube": "Youtube",
+        "twitter": "Twitter",
+        "messenger": "Messenger",
+        "gmail": "Gmail",
+    }
+
+    tech = None
+    low = (script_base or "").lower()
+    for k, v in tests_map.items():
+        if k in low:
+            tech = v
+            break
+
+    # Fallback to environment-provided values
+    env_mode = os.environ.get("AES_MODE", "").replace("_", " ").strip()
+    env_network = os.environ.get("AES_NETWORK", "").strip()
+
+    # detect network from script name if not in env
+    network = env_network or ("4G" if "4g" in low else ("3G" if "3g" in low else ""))
+
+    if not tech and env_mode:
+        tech = env_mode.title()
+
+    if not tech:
+        tech = prefix
+
+    date_str = datetime.now().strftime('%Y-%m-%d')
+    time_str = datetime.now().strftime('%H-%M-%S')
+
+    # If running in SIN_SALDO mode, group all screenshots for that network in a common folder
+    env_mode_raw = os.environ.get("AES_MODE", "").upper()
+    if env_mode_raw in ("SIN_SALDO", "SIN SALDO", "SIN-SALDO"):
+        net_label = network or ""
+        folder = os.path.join("logs", f"Screenshots Sin Saldo {net_label} {date_str}")
+        os.makedirs(folder, exist_ok=True)
+        safe_label = f"{tech}_{net_label}".strip().replace(" ", "_")
+        filename = f"{safe_label}_{date_str}_{time_str}.png"
+    else:
+        label = f"{tech} {network}".strip()
+        folder = os.path.join("logs", f"Screenshots {label} {date_str}")
+        os.makedirs(folder, exist_ok=True)
+        # filename: use underscore-separated label + timestamp
+        safe_label = label.replace(" ", "_") if label else prefix
+        filename = f"{safe_label}_{date_str}_{time_str}.png"
     path = os.path.join(folder, filename)
     try:
         d.screenshot(path)

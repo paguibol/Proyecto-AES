@@ -20,21 +20,6 @@ if _env_root:
 elif getattr(sys, "frozen", False):
     ROOT = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent))
     LOGS = Path(sys.executable).parent / "logs"
-from common import DEFAULTS
-import contextlib
-import subprocess
-import sys
-import os
-from collections import deque
-from pathlib import Path
-import runpy
-import io
-from datetime import datetime
-import argparse
-import time
-import re
-import shutil
-import threading
 
 _env_root = os.environ.get("AES_ROOT")
 if _env_root:
