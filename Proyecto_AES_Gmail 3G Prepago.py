@@ -4,7 +4,7 @@ from datetime import datetime
 import uiautomator2 as u2
 import os
 import sys
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_2_columns
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_time_to_Excel_2_columns, write_start_end_time_test_to_Excel, fill_excel_with_basic_info
 
 print(r"""
  ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
@@ -121,6 +121,9 @@ def Gmail(d, destination_email, repetitions=20, interval=60):
     now = time.time()
     start_time = ((int(now) // interval) + 1) * interval
 
+    tiempo_inicio = None
+    tiempo_fin = None
+
     for i in range(repetitions):
         target = start_time + i * interval
         wait = target - time.time()
@@ -132,8 +135,18 @@ def Gmail(d, destination_email, repetitions=20, interval=60):
 
         print(f"Gmail test #{i+1} starting at {datetime.now().strftime(current_time)}")
 
-        write_time_to_Excel_2_columns(i+1, current_time, col_a="G", col_b="H", start_row=62, NW="3G")    #Escribe en Excel, pasar en que columna, fila y RAT empieza a escribir. Pospago celda =G62  y H62 ; Prepago con saldo celda = O62 y P62
-        #write_time_to_Excel_1_column(i+1, current_time, col="T", start_row=136, NW="3G")                 # Descomentar MMS - Prepago sin saldo prepago sin saldo celda= T136
+        resultado = write_time_to_Excel_2_columns(i+1, current_time, col_a="O", col_b="P", start_row=62, NW="3G", total_reps=repetitions)    #Escribe en Excel, pasar en que columna, fila y RAT empieza a escribir. Pospago celda =G62  y H62 ; Prepago con saldo celda = O62 y P62
+
+        if resultado is not None:             #Buble para determinar el tiempo de la primera y última iteración, resultado es una tupla (tipo, timestamp) donde tipo es "PRIMERA" o "ULTIMA" y timestamp es la hora en que se escribió en Excel
+            tipo, ts = resultado       # Desempaquetamos la tupla (Ej: "PRIMERA", "06:14 PM")
+            if tipo == "PRIMERA":
+                tiempo_inicio = ts
+            elif tipo == "ULTIMA":
+                tiempo_fin = ts
+
+        write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="E", col_d="F", start_row=26, NW="3G")  # Escribe en Excel el tiempo de la primera y última iteración del test, en las columnas C y D respectivamente, para la tecnología 3G. 
+    
+
 
 
         d.app_start("com.google.android.gm")
@@ -184,6 +197,10 @@ def main():
     take_log(d)
     open_settings(d)
     Gmail(d, destination_email, repetitions=reps, interval=interval)
+
+    
+    fill_excel_with_basic_info(NW="3G")  #Llena en el excel el modelo y la fecha 
+
     close_settings(d)
     close_log(d)
     print("All repetitions completed. Exiting program.")

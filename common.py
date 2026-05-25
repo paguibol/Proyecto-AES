@@ -2,6 +2,7 @@ import subprocess
 from time import sleep
 from datetime import datetime
 import os
+import sys
 import openpyxl  #Libreria para manejar archivos Excel, para guardar los resultados de las pruebas
 from openpyxl import Workbook
 from menu_AES import build_filename_all, build_filename
@@ -13,7 +14,7 @@ from menu_AES import build_filename_all, build_filename
 
 
 DEFAULTS = {
-    "MMS_REPS":       5,  #20
+    "MMS_REPS":       2,  #20
     "MMS_INTERVAL":   60, #60
     "INTERNET_REPS":  5,  #5
     "INTERNET_INTERVAL": 60,#60
@@ -107,8 +108,16 @@ def take_screenshot(d, prefix="screenshot"):
 # Ejemplo de llamar a la funcion en cada programa: write_time_to_Excel_2_columns(i+1, current_time, col_a="C", col_b="D", start_row=36, NW="4G")    # col_a =columna a iniciar ;fila; pestaña del excel en cual tecnologia Señalización_3G o ...4G 
 
 
-def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row, NW):
-    ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
+def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row, NW, total_reps):
+    #checar ruta, yo tengo otra version
+    if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+        ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    else:
+        ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+
+
+
+    #ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
     nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
     path_completo = os.path.join(ruta_base, nombre_archivo)
 
@@ -137,16 +146,43 @@ def write_time_to_Excel_2_columns(iteration, timestamp, col_a, col_b, start_row,
         wb.save(path_completo)
         print(f"Guardado en {col_final}{fila_destino}: {timestamp}")
 
+
+
+
+        # --- LÓGICA DE RETORNO HORA INICIO Y FIN ---
+        if iteration == 1:           # Si es la primera iteración, regresamos el timestamp para guardarlo fuera
+            return "PRIMERA", timestamp
+        
+        elif iteration == total_reps:      # Si es la última iteración, regresamos el timestamp
+            return "ULTIMA", timestamp
+        
+        return None                        # Si es una iteración intermedia, regresa None (nada) 
+    
+
+
+    
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo '{nombre_archivo}' en la carpeta: {ruta_base}")
+    except PermissionError:
+        print(f"Error: No se pudo guardar. Cierra el archivo Excel antes de ejecutar.")
+    
     except Exception as e:
         print(f"Error al acceder al Excel, cierre el excel y guardelo con el nombre correcto en la carpeta - Pruebas_Homologacion_PS_3G_4G : {e}")
-
 
 ######### Función, guardar la hora en Excel, en la hoja "Señalización_3G" o "Señalización_4G"para 1 columnas (Internet, youtube, MMS (prepago sin balance), ...)
 # Ejemplo de llamar a la funcion en cada programa:     write_time_to_Excel_1_column(i+1, current_time, col="T", start_row=36, NW="3G")
 
 
-def write_time_to_Excel_1_column(iteration, timestamp, col, start_row, NW):
-    ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
+def write_time_to_Excel_1_column(iteration, timestamp, col, start_row, NW, total_reps):
+    #Chechar ruta, yo tengo otra version
+    if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+        ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    else:
+        ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+
+
+    
+    #ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
     nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
     path_completo = os.path.join(ruta_base, nombre_archivo)
 
@@ -167,6 +203,123 @@ def write_time_to_Excel_1_column(iteration, timestamp, col, start_row, NW):
         ws[f"{col_final}{fila_destino}"] = timestamp        # Escritura
         wb.save(path_completo)
         print(f"[{nombre_hoja}] Guardado en {col_final}{fila_destino}: {timestamp}")
+
+
+
+        # --- NUEVA LÓGICA DE RETORNO ---
+        if iteration == 1:           # Si es la primera iteración, regresamos el timestamp para guardarlo fuera
+            return "PRIMERA", timestamp
+        
+        elif iteration == total_reps:      # Si es la última iteración, regresamos el timestamp
+            return "ULTIMA", timestamp
+        
+        return None                        # Si es una iteración intermedia, regresa None (nada) 
+
+
+
+
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo '{nombre_archivo}' en la carpeta: {ruta_base}")
+    except PermissionError:
+        print(f"Error: No se pudo guardar. Cierra el archivo Excel antes de ejecutar.")
+
+    except Exception as e:
+        print(f"Error al acceder al Excel (Cierre el excel o guardelo en la carpeta con el nombre correcto - Pruebas_Homologacion_PS_3G_4G ): {e}")
+
+
+
+
+
+def write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c, col_d, start_row, NW):  
+    
+    
+    if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+        ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    else:
+        ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+
+    nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
+    path_completo = os.path.join(ruta_base, nombre_archivo)
+
+    try:
+        wb = openpyxl.load_workbook(path_completo)
+        nombre_hoja = f"Señalización_{NW}"
+        
+        if nombre_hoja in wb.sheetnames:
+            ws = wb[nombre_hoja]
+        else:
+            print(f"Error: No se encontró la pestaña '{nombre_hoja}' (verifique variable NW)")
+            return
+
+        # Escribir tiempo de inicio y fin en las columnas C y D respectivamente, en la fila 36 (o la que corresponda)
+        ws[f"{col_c}{start_row}"] = tiempo_inicio
+        ws[f"{col_d}{start_row}"] = tiempo_fin
+        wb.save(path_completo)
+        #print(f"[{nombre_hoja}] Guardado tiempo de inicio en {col_c}{start_row}: {tiempo_inicio}")
+        #print(f"[{nombre_hoja}] Guardado tiempo de fin en {col_d}{start_row}: {tiempo_fin}")
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo '{nombre_archivo}' en la carpeta: {ruta_base}")
+    except PermissionError:
+        print(f"Error: No se pudo guardar. Cierra el archivo Excel antes de ejecutar.")
+
+    except Exception as e:
+        print(f"Error al acceder al Excel (Cierre el excel o guardelo en la carpeta con el nombre correcto - Pruebas_Homologacion_PS_3G_4G ): {e}")
+
+
+
+#Función para llenar el Excel con información del modelo, fecha y posteriormente el numero de la SIM
+
+def fill_excel_with_basic_info(NW):  
+    
+
+    device_name = adb("shell getprop ro.product.model") #obtener el nombre del dispositivo para escribirlo en el Excel
+
+    current_date = datetime.now().strftime('%d/%m/%Y') # obtener el tiempo actual para escribirlo en el Excel
+
+
+    
+    # Llenar información básica de la prueba en el Excel, como la tecnología y el número de repeticiones
+    if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+        ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    else:
+        ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+
+    nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
+    path_completo = os.path.join(ruta_base, nombre_archivo)
+
+
+    try:
+        wb = openpyxl.load_workbook(path_completo)
+        nombre_hoja = f"Señalización_{NW}"
+        
+        if nombre_hoja in wb.sheetnames:
+            ws = wb[nombre_hoja]
+        else:
+            print(f"Error: No se encontró la pestaña '{nombre_hoja}' (verifique variable NW)")
+            return
+
+
+
+        # 1. Escribir el Modelo en la celda B15
+        ws["B15"] = f"Modelo: {device_name}"
+        
+        # 2. Escribir la Fecha de pruebas en la celda B16
+        ws["B16"] = f"Fecha de pruebas: {current_date}"
+
+
+
+        wb.save(path_completo)
+
+
+
+
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo '{nombre_archivo}' en la carpeta: {ruta_base}")
+    except PermissionError:
+        print(f"Error: No se pudo guardar. Cierra el archivo Excel antes de ejecutar.")
 
     except Exception as e:
         print(f"Error al acceder al Excel (Cierre el excel o guardelo en la carpeta con el nombre correcto - Pruebas_Homologacion_PS_3G_4G ): {e}")
