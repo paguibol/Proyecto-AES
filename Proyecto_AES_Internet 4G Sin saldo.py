@@ -138,11 +138,6 @@ def chrome_news(d, repetitions=5, interval=60):
 
         write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="G", col_d="H", start_row=22, NW="4G")  # Escribe en Excel el tiempo de la primera y última iteración del test, en las columnas C y D respectivamente, para la tecnología 3G. 
     
-
-
-
-
-
         d.app_start("com.android.chrome")
         sleep(2)
         if d(resourceId="com.android.chrome:id/url_bar").exists:
@@ -153,21 +148,27 @@ def chrome_news(d, repetitions=5, interval=60):
         else:
             d.app_stop("com.android.chrome")
             continue
-
         sleep(7)
-        if i == 4:
+        print(f"[DEBUG] after load: i={i}, repetitions={repetitions}, repetitions_type={type(repetitions).__name__}")
+
+        if i == repetitions - 1:
             sleep(2)
-            take_screenshot(d)
+            print(f"[DEBUG] Iteration {i+1}/{repetitions}: about to take screenshot")
+            try:
+                take_screenshot(d)
+                print(f"[DEBUG] take_screenshot() completed")
+            except Exception as e:
+                print(f"[DEBUG] take_screenshot() raised: {e}")
             sleep(5)
         else:
+            print(f"[DEBUG] Iteration {i+1}/{repetitions}: stopping chrome and going home")
             d.app_stop("com.android.chrome")
             go_home(d)
-        elapsed = time.time() - iter_start
     print("chrome_news schedule finished.")
 
 def main():
     connection()
-    sleep(250)
+#    sleep(250)
     d = u2.connect()
     interval = get_cfg("INTERNET_INTERVAL")
     reps     = get_cfg("INTERNET_REPS")
