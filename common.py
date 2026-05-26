@@ -153,12 +153,12 @@ def take_screenshot(d, prefix="screenshot"):
     date_str = datetime.now().strftime('%Y-%m-%d')
     time_str = datetime.now().strftime('%H-%M-%S')
 
-    # If running in SIN_SALDO mode, group screenshots per network but keep a subfolder per test
+    # If running in SIN_SALDO mode, keep the same per-test folder pattern as other modes
     env_mode_raw = os.environ.get("AES_MODE", "").upper()
     net_label = network or ""
     if env_mode_raw in ("SIN_SALDO", "SIN SALDO", "SIN-SALDO"):
-        # logs/Screenshots Sin Saldo {network} {date}/{Tech}/
-        folder = os.path.join("logs", f"Screenshots Sin Saldo {net_label} {date_str}", tech)
+        # logs/Screenshots {Tech} {network} {date}/
+        folder = os.path.join("logs", f"Screenshots {tech} {net_label} {date_str}")
         os.makedirs(folder, exist_ok=True)
         safe_label = f"{tech}_{net_label}".strip().replace(" ", "_")
         print(f"La tecnologia es: {tech} y la red es: {network}")
