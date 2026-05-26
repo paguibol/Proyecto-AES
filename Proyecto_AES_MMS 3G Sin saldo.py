@@ -4,7 +4,7 @@ from datetime import datetime
 import uiautomator2 as u2
 import os
 import sys
-from common import adb, connection, go_home, open_bbklogs, take_screenshot, get_cfg, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM, go_back
+from common import adb, connection, go_home, open_bbklogs, take_screenshot, get_cfg, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM, go_back, paste_to_excel_screenshot
 
 
 print(r"""
@@ -216,7 +216,9 @@ def mms(phone_number, repetitions=5, interval=60):
             if i == 1: #4
                 go_back(d)
                 sleep(2)
-                take_screenshot(d)
+                tech, network, path = take_screenshot(d)
+                sleep(2)
+                paste_to_excel_screenshot(NW=network, test_name=tech, ruta_imagen=path)
                 sleep(5)
             else:
                 d.app_stop("com.google.android.apps.messaging")
@@ -229,9 +231,9 @@ def main():
     reps     = get_cfg("MMS_REPS")
     d = u2.connect()
     phone_number = destination()
-    open_bbklogs(d)
-    take_log(d)
-    open_settings(d)   
+    #open_bbklogs(d)
+    #take_log(d)
+    #open_settings(d)   
     mms(phone_number, repetitions=reps, interval=interval)
     number_10_digits = get_number_SIM(d)
     fill_excel_with_basic_info(NW="3G", SIM_number=number_10_digits, Linea ="Prepago sin saldo")  #Llena en el excel el modelo y la fecha, en Línea colocar: "Pospago", "Prepago sin saldo" o "Prepago con saldo" dependiendo del tipo de línea que se esté probando

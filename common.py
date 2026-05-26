@@ -3,10 +3,11 @@ from time import sleep
 from datetime import datetime
 import os
 import sys
+from tkinter import Image
 import openpyxl  #Libreria para manejar archivos Excel, para guardar los resultados de las pruebas
 from openpyxl import Workbook
 from menu_AES import build_filename_all, build_filename
-
+from openpyxl.drawing.image import Image
 
 # Mode-specific defaults. AES_MODE controls which set is active in a child process.
 DEFAULTS_BY_MODE = {
@@ -159,9 +160,11 @@ def take_screenshot(d, prefix="screenshot"):
         folder = os.path.join("logs", f"Screenshots Sin Saldo {net_label} {date_str}")
         os.makedirs(folder, exist_ok=True)
         safe_label = f"{tech}_{net_label}".strip().replace(" ", "_")
+        print(f"La tecnologia es: {tech} y la red es: {network}")
         filename = f"{safe_label}_{date_str}_{time_str}.png"
     else:
         label = f"{tech} {network}".strip()
+        print(f"La tecnologia es: {tech} y la red es  : {network}")
         folder = os.path.join("logs", f"Screenshots {label} {date_str}")
         os.makedirs(folder, exist_ok=True)
         # filename: use underscore-separated label + timestamp
@@ -173,6 +176,8 @@ def take_screenshot(d, prefix="screenshot"):
         print(f"Screenshot saved: {path}")
     except Exception as e:
         print("Failed to take screenshot:", e)
+    
+    return tech, network, path
 
 
 
@@ -418,3 +423,79 @@ def get_number_SIM(d):
     #print(f"SIM number: {number_10_digits}")
     d.app_stop("com.android.settings")
     return number_10_digits
+
+
+def paste_to_excel_screenshot(NW, test_name, ruta_imagen):
+    
+    print(f"Intentando pegar la imagen en el Excel. Tecnología:{NW}, Test:{test_name}, Ruta imagen:{ruta_imagen}")
+    if getattr(sys, 'frozen', False):                             # Para guardar en excel en donde esta el ejecutable .exe
+        ruta_base = os.path.dirname(sys.executable)               # Si el programa está congelado, usa la ruta del ejecutable.
+    else:
+        ruta_base = os.path.dirname(os.path.abspath(__file__))    # Si no, usa la ruta del script .py
+
+    #ruta_base = os.environ.get("AES_RUTA_BASE", os.path.dirname(os.path.abspath(__file__)))
+    nombre_archivo = "Pruebas_Homologacion_PS_3G_4G.xlsx"
+    path_completo = os.path.join(ruta_base, nombre_archivo)
+
+    path_imagen_absoluto = os.path.join(ruta_base, ruta_imagen)
+    print(f"Se encontró la screenshot en: {path_imagen_absoluto}")
+
+    if not os.path.exists(path_imagen_absoluto):
+        print(f"Error: Físicamente no se encontró la screenshot en: {path_imagen_absoluto}")
+        return
+
+    
+    img = Image(path_imagen_absoluto)  #Cargar la imagen usando la ruta absoluta para evitar problemas de directorio actual
+
+    try:
+        wb = openpyxl.load_workbook(path_completo)
+        nombre_hoja = f"Señalización_{NW}"
+        
+        if nombre_hoja in wb.sheetnames:
+            ws = wb[nombre_hoja]
+        else:
+            print(f"Error: No se encontró la pestaña '{nombre_hoja}' (verifique variable NW)")
+            return
+
+        img.width = 250 # 250
+        img.height = 395 #500
+
+        # 4. MAPEO Y ASIGNACIÓN DE LA IMAGEN EN LA CELDA CORRESPONDIENTE
+        celda_destino = None
+        
+        # Convertimos a mayúsculas/minúsculas correctas para evitar errores de comparación
+        test_name_clean = str(test_name).strip().capitalize()
+        #print(f"Test name limpio para comparación: '{test_name_clean}'")
+
+        if test_name_clean == "Mms":
+            celda_destino = "V34"
+        elif test_name_clean == "Internet":
+            celda_destino = "V54"
+        elif test_name_clean == "Youtube":
+            celda_destino = "V74"
+        elif test_name_clean == "Twitter":
+            celda_destino = "V94"
+        elif test_name_clean == "Messenger":
+            celda_destino = "V114"
+        elif test_name_clean == "Gmail":
+            celda_destino = "V134"
+        else:
+            print(f"Error: test_name '{test_name}' no reconocido para pegar la imagen en el Excel.")
+            return  
+
+       
+        ws.add_image(img, celda_destino) # Insertar la imagen en la celda destino
+        wb.save(path_completo) # Guardar el archivo Excel después de insertar la imagen
+        
+        print(f"Imagen pegada con éxito en la pestaña [{nombre_hoja}], Celda {celda_destino}")
+        print(f"Origen: {ruta_imagen}")
+
+
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo '{nombre_archivo}' en la carpeta: {ruta_base}")
+    except PermissionError:
+        print(f"Error: No se pudo guardar. Cierra el archivo Excel antes de ejecutar.")
+
+    except Exception as e:
+        print(f"Error al acceder al Excel para insertar la imagen (Cierre el excel o guardelo en la carpeta con el nombre correcto - Pruebas_Homologacion_PS_3G_4G ): {e}")
