@@ -1,0 +1,25 @@
+
+ ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
+|\  \    /  /|\  \|\  \    /  /|\   __  \        |\  \ |\___   ___\\___   ___\     |\   _ \  _   \|\  ___ \    |\  \  /  /|\  \|\   ____\|\   __  \    
+\ \  \  /  / | \  \ \  \  /  / | \  \|\  \       \ \  \\|___ \  \_\|___ \  \_|     \ \  \\\__\ \  \ \   __/|   \ \  \/  / | \  \ \  \___|\ \  \|\  \   
+ \ \  \/  / / \ \  \ \  \/  / / \ \  \\\  \       \ \  \    \ \  \     \ \  \       \ \  \\|__| \  \ \  \_|/__  \ \    / / \ \  \ \  \    \ \  \\\  \  
+  \ \    / /   \ \  \ \    / /   \ \  \\\  \       \ \  \____\ \  \     \ \  \       \ \  \    \ \  \ \  \_|\ \  /     \/   \ \  \ \  \____\ \  \\\  \ 
+   \ \__/ /     \ \__\ \__/ /     \ \_______\       \ \_______\ \__\     \ \__\       \ \__\    \ \__\ \_______\/  /\   \    \ \__\ \_______\ \_______\
+    \|__|/       \|__|\|__|/       \|_______|        \|_______|\|__|      \|__|        \|__|     \|__|\|_______/__/ /\ __\    \|__|\|_______|\|_______|
+                                        
+                                                                                                                                                
+
+Device detected: V2515 
+Air plane mode disabled
+MMS test #1 started at 04:21 PM
+[Señalización_3G] Guardado en T36: 04:21 PM
+FAB button not found.
+MMS test #2 started at 04:21 PM
+[Señalización_3G] Guardado en T37: 04:21 PM
+La tecnologia es: MMS y la red es  : 3G
+Screenshot saved: logs\Screenshots MMS 3G 2026-05-26\MMS_3G_2026-05-26_16-22-17.png
+Intentando pegar la imagen en el Excel. Tecnología:3G, Test:MMS, Ruta imagen:logs\Screenshots MMS 3G 2026-05-26\MMS_3G_2026-05-26_16-22-17.png
+Se encontró la screenshot en: C:\Users\aldoh\OneDrive\Documentos\GitHub\Proyecto-AES\logs\Screenshots MMS 3G 2026-05-26\MMS_3G_2026-05-26_16-22-17.png
+Imagen pegada con éxito en la pestaña [Señalización_3G], Celda V34
+Origen: logs\Screenshots MMS 3G 2026-05-26\MMS_3G_2026-05-26_16-22-17.png
+All repetitions completed. Exiting program.

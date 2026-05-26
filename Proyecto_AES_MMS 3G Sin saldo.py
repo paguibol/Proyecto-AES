@@ -213,13 +213,13 @@ def mms(phone_number, repetitions=5, interval=60):
 
         finally:
             sleep(5)
-            if i == 4: #4
+            if i == 1: #4
                 go_back(d)
                 sleep(2)
                 tech, network, path = take_screenshot(d)
                 sleep(2)
                 paste_to_excel_screenshot(NW=network, test_name=tech, ruta_imagen=path)
-                sleep(5)
+                sleep(4)
             else:
                 d.app_stop("com.google.android.apps.messaging")
                 go_home(d)

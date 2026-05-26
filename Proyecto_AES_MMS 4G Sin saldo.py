@@ -4,7 +4,7 @@ from datetime import datetime
 import uiautomator2 as u2
 import os
 import sys
-from common import adb, connection, go_home, open_bbklogs, take_screenshot, get_cfg, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM, go_back
+from common import adb, connection, go_home, open_bbklogs, take_screenshot, get_cfg, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM, go_back, paste_to_excel_screenshot
 
 
 print(r"""
@@ -217,14 +217,16 @@ def mms(phone_number, repetitions=5, interval=60):
 
         finally:
             sleep(5)
-        if i == 4: #4  
-            go_back(d)
-            sleep(2)
-            take_screenshot(d)
-            sleep(5)
-        else:
-            d.app_stop("com.google.android.apps.messaging")
-            go_home(d)
+            if i == 1: #4  
+                go_back(d)
+                sleep(2)
+                tech, network, path = take_screenshot(d)
+                sleep(2)
+                paste_to_excel_screenshot(NW=network, test_name=tech, ruta_imagen=path)
+                sleep(4)
+            else:
+                d.app_stop("com.google.android.apps.messaging")
+                go_home(d)
 
 
 def main():

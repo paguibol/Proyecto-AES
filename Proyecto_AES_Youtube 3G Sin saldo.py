@@ -3,7 +3,7 @@ from time import sleep
 from datetime import datetime
 import os
 import uiautomator2 as u2
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM, paste_to_excel_screenshot
 
 print(r"""
  ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
@@ -44,14 +44,7 @@ def goto_start_record(d):
     if d(resourceId="com.android.bbklog:id/log_record_start_btn").wait(timeout=10):
         d(resourceId="com.android.bbklog:id/log_record_start_btn").click()
         sleep(5)
-        if i == 4:
-            go_back(d)
-            sleep(2)
-            take_screenshot(d)
-            sleep(5)
-        else:
-            d.app_stop("com.google.android.youtube")
-            go_home(d)
+        go_home(d)
 def close_log(d):
     try:
         open_bbklogs(d)
@@ -143,15 +136,22 @@ def youtube(d, repetitions=10, interval=60):
 
         d.swipe_ext("up", scale=0.2)
         sleep(5)
-        take_screenshot(d)
-        sleep(5)
-        go_home(d)
-        d.app_stop("com.google.android.youtube")
+
+        if i == 1:
+            sleep(2)
+            tech, network, path = take_screenshot(d)
+            sleep(2)
+            paste_to_excel_screenshot(NW=network, test_name=tech, ruta_imagen=path)
+            sleep(5)
+        else:
+            d.app_stop("com.google.android.youtube")
+            go_home(d)
     print("YouTube schedule finished.")
+
 
 def main():
     connection()
-    sleep(300)
+    #sleep(300)
     d = u2.connect()
     interval = get_cfg("YT_INTERVAL")
     reps     = get_cfg("YT_REPS")

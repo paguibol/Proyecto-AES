@@ -1,0 +1,35 @@
+
+ __     __  ___  __     __   ___      _____   ___   _____   _       ____      _____   _____   ____    _____ 
+ \ \   / / |_ _| \ \   / /  / _ \    |  ___| |_ _| | ____| | |     |  _ \    |_   _| | ____| / ___|  |_   _|
+  \ \ / /   | |   \ \ / /  | | | |   | |_     | |  |  _|   | |     | | | |     | |   |  _|   \___ \    | |  
+   \ V /    | |    \ V /   | |_| |   |  _|    | |  | |___  | |___  | |_| |     | |   | |___   ___) |   | |  
+    \_/    |___|    \_/     \___/    |_|     |___| |_____| |_____| |____/      |_|   |_____| |____/    |_|          
+                                    
+                                                    ⢀⣠⣤⣤⣶⣶⣶⣶⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀
+                                            ⠀⠀⠀⠀⢀⣤⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣤⡀⠀⠀⠀⠀
+                                            ⠀⠀⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀
+                                            ⠀⢀⣾⣯⠻⣿⣿⣿⣿⡿⠟⠛⠉⠉⠛⠻⢿⣿⣿⣿⣿⣿⣷⡀⠀
+                                            ⠀⣾⣿⣿⣧⠈⠻⡿⠋⠀⠀⣀⣠⣄⣀⠀⠀⠀⠀⠀⣀⣤⣴⣾⣷⠀
+                                            ⢠⣿⣿⣿⣿⣧⠀⠀⠀⢠⣾⣿⣿⣿⣿⣷⡄⠀⠈⣿⣿⣿⣿⣿⣿⡄
+                                            ⢸⣿⣿⣿⣿⣿⡇⠀⠀⢾⣿⣿⣿⣿⣿⣿⡷⠀⠀⢸⣿⣿⣿⣿⣿⡇
+                                            ⠘⣿⣿⣿⣿⣿⣿⡀⠀⠘⢿⣿⣿⣿⣿⡿⠃⠀⢀⣿⣿⣿⣿⣿⣿⠃
+                                            ⠀⢿⣿⣿⣿⣿⣿⣷℀⠀⠀⠉⠙⠋⠉⠀⠀⣠⣾⣿⣿⣿⣿⣿⡿⠀
+                                            ⠀⠈⢿⣿⣿⣿⣿⣿⣿⣦⣤⣀⡀⠀⢀⣾⣿⣿⣿⣿⣿⣿⡿⠁⠀
+                                            ⠀⠀⠀⠻⣿⣿⣿⣿⣿⣿⣿⣿⠃⣠⣾⣿⣿⣿⣿⣿⣿⠟⠀⠀⠀
+                                            ⠀⠀⠀⠀⠈⠛⢿⣿⣿⣿⣿⣿⡏⣰⣿⣿⣿⣿⣿⡿⠛⠁⠀⠀⠀⠀
+                                            ⠀⠀⠀⠀⠀⠀⠀⠈⠙⠛⠛⠿⠼⠿⠿⠛⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀
+
+Device detected: V2515 
+Air plane mode disabled
+Internet test #1 starting at 04:28 PM
+[Señalización_3G] Guardado en T56: 04:28 PM
+Internet test #2 starting at 04:28 PM
+[Señalización_3G] Guardado en T57: 04:28 PM
+La tecnologia es: Internet y la red es  : 3G
+Screenshot saved: logs\Screenshots Internet 3G 2026-05-26\Internet_3G_2026-05-26_16-28-58.png
+Intentando pegar la imagen en el Excel. Tecnología:3G, Test:Internet, Ruta imagen:logs\Screenshots Internet 3G 2026-05-26\Internet_3G_2026-05-26_16-28-58.png
+Se encontró la screenshot en: C:\Users\aldoh\OneDrive\Documentos\GitHub\Proyecto-AES\logs\Screenshots Internet 3G 2026-05-26\Internet_3G_2026-05-26_16-28-58.png
+Imagen pegada con éxito en la pestaña [Señalización_3G], Celda V54
+Origen: logs\Screenshots Internet 3G 2026-05-26\Internet_3G_2026-05-26_16-28-58.png
+chrome_news schedule finished.
+All repetitions completed. Exiting program.

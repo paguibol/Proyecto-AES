@@ -6,7 +6,7 @@ import os
 import sys
 import traceback
 import threading
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel,fill_excel_with_basic_info, get_number_SIM
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel,fill_excel_with_basic_info, get_number_SIM, paste_to_excel_screenshot
 
 print(r"""
  ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
@@ -184,10 +184,12 @@ def Messenger(d, destination_contact, repetitions=20, interval=60):
             print("Search bar not found.")
 
         sleep(5)
-        if i == 4:
+        if i == 1:
             sleep(2)
-            take_screenshot(d)
-            sleep(5)
+            tech, network, path = take_screenshot(d)
+            sleep(2)
+            paste_to_excel_screenshot(NW=network, test_name=tech, ruta_imagen=path)
+            sleep(4)
         else:
             d.app_stop("com.facebook.orca")
             go_home(d)

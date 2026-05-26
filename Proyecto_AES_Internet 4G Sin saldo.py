@@ -4,7 +4,7 @@ from time import sleep
 from datetime import datetime
 import uiautomator2 as u2
 from uiautomator2.exceptions import UiObjectNotFoundError
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM, paste_to_excel_screenshot
 
 print(r"""
  __     __  ___  __     __   ___      _____   ___   _____   _       ____      _____   _____   ____    _____ 
@@ -181,10 +181,12 @@ def chrome_news(d, repetitions=5, interval=60):
                 continue
         sleep(7)
 
-        if i == 4:  
+        if i == 1:  
             sleep(2)
-            take_screenshot(d)
-            sleep(5)
+            tech, network, path = take_screenshot(d)
+            sleep(2)
+            paste_to_excel_screenshot(NW=network, test_name=tech, ruta_imagen=path)
+            sleep(4)
         else:
             d.app_stop("com.android.chrome")
             go_home(d)

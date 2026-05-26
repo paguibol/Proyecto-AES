@@ -4,7 +4,7 @@ import time
 from time import sleep
 from datetime import datetime
 import uiautomator2 as u2
-from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM  
+from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot, write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM, paste_to_excel_screenshot  
 
 print(r"""
  ___      ___ ___  ___      ___ ________          ___   _________  _________        _____ ______   _______      ___    ___ ___  ________  ________     
@@ -273,10 +273,12 @@ def Twitter(d, repetitions=20, interval=60):
             print("No se encontró el botón Enviar.")
 
         sleep(10)
-        if i == 4:
+        if i == 1:
             sleep(2)
-            take_screenshot(d)
-            sleep(5)
+            tech, network, path = take_screenshot(d)
+            sleep(2)
+            paste_to_excel_screenshot(NW=network, test_name=tech, ruta_imagen=path)
+            sleep(4)
         else:
             d.app_stop("com.twitter.android")
             go_home(d)
@@ -288,9 +290,9 @@ def main():
     d = u2.connect()
     interval = get_cfg("TWITTER_INTERVAL")
     reps     = get_cfg("TWITTER_REPS")
-#    open_bbklogs(d)
-#    sleep(5)
-#    take_log(d)
+    open_bbklogs(d)
+    sleep(5)
+    take_log(d)
     open_settings(d)
     Twitter(d, repetitions=reps, interval=interval)
     number_10_digits = get_number_SIM(d)
