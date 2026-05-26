@@ -19,7 +19,7 @@ DEFAULTS_BY_MODE = {
         "YT_INTERVAL":    60,
         "GMAIL_REPS":     5,
         "GMAIL_INTERVAL": 60,
-        "TWITTER_REPS":   2,
+        "TWITTER_REPS":   5,
         "TWITTER_INTERVAL": 60,
         "MESSENGER_REPS": 5,
         "MESSENGER_INTERVAL": 60,
@@ -152,11 +152,12 @@ def take_screenshot(d, prefix="screenshot"):
     date_str = datetime.now().strftime('%Y-%m-%d')
     time_str = datetime.now().strftime('%H-%M-%S')
 
-    # If running in SIN_SALDO mode, group all screenshots for that network in a common folder
+    # If running in SIN_SALDO mode, group screenshots per network but keep a subfolder per test
     env_mode_raw = os.environ.get("AES_MODE", "").upper()
+    net_label = network or ""
     if env_mode_raw in ("SIN_SALDO", "SIN SALDO", "SIN-SALDO"):
-        net_label = network or ""
-        folder = os.path.join("logs", f"Screenshots Sin Saldo {net_label} {date_str}")
+        # logs/Screenshots Sin Saldo {network} {date}/{Tech}/
+        folder = os.path.join("logs", f"Screenshots Sin Saldo {net_label} {date_str}", tech)
         os.makedirs(folder, exist_ok=True)
         safe_label = f"{tech}_{net_label}".strip().replace(" ", "_")
         filename = f"{safe_label}_{date_str}_{time_str}.png"
@@ -378,9 +379,9 @@ def fill_excel_with_basic_info(NW, SIM_number, Linea):
 
         if Linea == "Pospago":
             ws["F14"] = f"Línea Pospago: {SIM_number}"
-        elif Linea == "Prepago sin saldo":
-            ws["F15"] = f"Línea Prepago con saldo: {SIM_number}"
         elif Linea == "Prepago con saldo":
+            ws["F15"] = f"Línea Prepago con saldo: {SIM_number}"
+        elif Linea == "Prepago sin saldo":
             ws["F16"] = f"Línea Prepago sin saldo: {SIM_number}"
         else:
             print("Error: Linea debe ser 'Pospago' o 'Prepago sin saldo' o 'Prepago con saldo' ")
@@ -414,7 +415,6 @@ def get_number_SIM(d):
     sleep(2)
     complete_text = d(resourceId="com.android.phone:id/edit").get_text()
     number_10_digits = complete_text[3:]
-    d.app_stop("com.android.settings")
-    #print(f"SIM number: {number_10_digits}")
+    sleep(4)
     d.app_stop("com.android.settings")
     return number_10_digits

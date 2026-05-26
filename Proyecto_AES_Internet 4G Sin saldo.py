@@ -3,6 +3,7 @@ import time
 from time import sleep
 from datetime import datetime
 import uiautomator2 as u2
+from uiautomator2.exceptions import UiObjectNotFoundError
 from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM
 
 print(r"""
@@ -129,7 +130,7 @@ def chrome_news(d, repetitions=5, interval=60):
         resultado = write_time_to_Excel_1_column(i+1, current_time, col="T", start_row=56, NW="4G", total_reps=repetitions)                #Escribe en Excel, pasar en que columna, fila y RAT empieza a escribir. Pospago celda =G36; Prepago con saldo celda = O36; prepago sin saldo celda= T56 
 
 
-        if resultado is not None:             #Buble para determinar el tiempo de la primera y última iteración, resultado es una tupla (tipo, timestamp) donde tipo es "PRIMERA" o "ULTIMA" y timestamp es la hora en que se escribió en Excel
+        if resultado is not None:      #Buble para determinar el tiempo de la primera y última iteración, resultado es una tupla (tipo, timestamp) donde tipo es "PRIMERA" o "ULTIMA" y timestamp es la hora en que se escribió en Excel
             tipo, ts = resultado       # Desempaquetamos la tupla (Ej: "PRIMERA", "06:14 PM")
             if tipo == "PRIMERA":
                 tiempo_inicio = ts
@@ -141,34 +142,57 @@ def chrome_news(d, repetitions=5, interval=60):
         d.app_start("com.android.chrome")
         sleep(2)
         if d(resourceId="com.android.chrome:id/url_bar").exists:
-            d(resourceId="com.android.chrome:id/url_bar").click()
-            sleep(1)
-            d(resourceId="com.android.chrome:id/url_bar").set_text("news")
-            d.press("enter")
-        else:
-            d.app_stop("com.android.chrome")
-            continue
-        sleep(7)
-        print(f"[DEBUG] after load: i={i}, repetitions={repetitions}, repetitions_type={type(repetitions).__name__}")
-
-        if i == repetitions - 1:
-            sleep(2)
-            print(f"[DEBUG] Iteration {i+1}/{repetitions}: about to take screenshot")
             try:
-                take_screenshot(d)
-                print(f"[DEBUG] take_screenshot() completed")
+                d(resourceId="com.android.chrome:id/url_bar").click()
+                sleep(1)
+                try:
+                    d(resourceId="com.android.chrome:id/url_bar").set_text("news")
+                except Exception:
+                    try:
+                        d.shell('input text news')
+                    except Exception as e:
+                        print("chrome_news: adb input text failed for url_bar:", e)
+                d.press("enter")
             except Exception as e:
-                print(f"[DEBUG] take_screenshot() raised: {e}")
+                print("chrome_news: url_bar click/set_text failed:", e)
+                pass
+        else:
+            try:
+                if d(resourceId="com.android.chrome:id/search_box_text").wait(timeout=5):
+                    d(resourceId="com.android.chrome:id/search_box_text").click()
+                    sleep(1)
+                    try:
+                        d(resourceId="com.android.chrome:id/search_box_text").set_text("news")
+                    except Exception:
+                        try:
+                            d.shell('input text news')
+                        except Exception as e:
+                            print("chrome_news: adb input text failed for search_box_text:", e)
+                    d.press("enter")
+                else:
+                    d.app_stop("com.android.chrome")
+                    continue
+            except UiObjectNotFoundError:
+                d.app_stop("com.android.chrome")
+                continue
+            except Exception as e:
+                print("chrome_news: fallback search_box_text failed:", e)
+                d.app_stop("com.android.chrome")
+                continue
+        sleep(7)
+
+        if i == 4:  
+            sleep(2)
+            take_screenshot(d)
             sleep(5)
         else:
-            print(f"[DEBUG] Iteration {i+1}/{repetitions}: stopping chrome and going home")
             d.app_stop("com.android.chrome")
             go_home(d)
     print("chrome_news schedule finished.")
 
 def main():
     connection()
-#    sleep(250)
+    sleep(250)
     d = u2.connect()
     interval = get_cfg("INTERNET_INTERVAL")
     reps     = get_cfg("INTERNET_REPS")
