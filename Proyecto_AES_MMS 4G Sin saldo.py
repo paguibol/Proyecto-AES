@@ -217,7 +217,7 @@ def mms(phone_number, repetitions=5, interval=60):
 
         finally:
             sleep(5)
-        if i == 4:  
+        if i == 4: #4  
             go_back(d)
             sleep(2)
             take_screenshot(d)

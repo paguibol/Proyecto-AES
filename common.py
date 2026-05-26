@@ -11,7 +11,7 @@ from menu_AES import build_filename_all, build_filename
 # Mode-specific defaults. AES_MODE controls which set is active in a child process.
 DEFAULTS_BY_MODE = {
     "SIN_SALDO": {
-        "MMS_REPS":       5,
+        "MMS_REPS":       2, #5
         "MMS_INTERVAL":   60,
         "INTERNET_REPS":  5,
         "INTERNET_INTERVAL": 60,
