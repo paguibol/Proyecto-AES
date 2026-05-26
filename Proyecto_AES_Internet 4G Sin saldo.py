@@ -3,6 +3,7 @@ import time
 from time import sleep
 from datetime import datetime
 import uiautomator2 as u2
+from uiautomator2.exceptions import UiObjectNotFoundError
 from common import adb, connection, go_home, open_bbklogs, get_cfg, take_screenshot,write_time_to_Excel_1_column, write_start_end_time_test_to_Excel, fill_excel_with_basic_info, get_number_SIM
 
 print(r"""
@@ -129,7 +130,7 @@ def chrome_news(d, repetitions=5, interval=60):
         resultado = write_time_to_Excel_1_column(i+1, current_time, col="T", start_row=56, NW="4G", total_reps=repetitions)                #Escribe en Excel, pasar en que columna, fila y RAT empieza a escribir. Pospago celda =G36; Prepago con saldo celda = O36; prepago sin saldo celda= T56 
 
 
-        if resultado is not None:             #Buble para determinar el tiempo de la primera y última iteración, resultado es una tupla (tipo, timestamp) donde tipo es "PRIMERA" o "ULTIMA" y timestamp es la hora en que se escribió en Excel
+        if resultado is not None:      #Buble para determinar el tiempo de la primera y última iteración, resultado es una tupla (tipo, timestamp) donde tipo es "PRIMERA" o "ULTIMA" y timestamp es la hora en que se escribió en Excel
             tipo, ts = resultado       # Desempaquetamos la tupla (Ej: "PRIMERA", "06:14 PM")
             if tipo == "PRIMERA":
                 tiempo_inicio = ts
@@ -138,31 +139,55 @@ def chrome_news(d, repetitions=5, interval=60):
 
         write_start_end_time_test_to_Excel(tiempo_inicio, tiempo_fin, col_c="G", col_d="H", start_row=22, NW="4G")  # Escribe en Excel el tiempo de la primera y última iteración del test, en las columnas C y D respectivamente, para la tecnología 3G. 
     
-
-
-
-
-
         d.app_start("com.android.chrome")
         sleep(2)
         if d(resourceId="com.android.chrome:id/url_bar").exists:
-            d(resourceId="com.android.chrome:id/url_bar").click()
-            sleep(1)
-            d(resourceId="com.android.chrome:id/url_bar").set_text("news")
-            d.press("enter")
+            try:
+                d(resourceId="com.android.chrome:id/url_bar").click()
+                sleep(1)
+                try:
+                    d(resourceId="com.android.chrome:id/url_bar").set_text("news")
+                except Exception:
+                    try:
+                        d.shell('input text news')
+                    except Exception as e:
+                        print("chrome_news: adb input text failed for url_bar:", e)
+                d.press("enter")
+            except Exception as e:
+                print("chrome_news: url_bar click/set_text failed:", e)
+                pass
         else:
-            d.app_stop("com.android.chrome")
-            continue
-
+            try:
+                if d(resourceId="com.android.chrome:id/search_box_text").wait(timeout=5):
+                    d(resourceId="com.android.chrome:id/search_box_text").click()
+                    sleep(1)
+                    try:
+                        d(resourceId="com.android.chrome:id/search_box_text").set_text("news")
+                    except Exception:
+                        try:
+                            d.shell('input text news')
+                        except Exception as e:
+                            print("chrome_news: adb input text failed for search_box_text:", e)
+                    d.press("enter")
+                else:
+                    d.app_stop("com.android.chrome")
+                    continue
+            except UiObjectNotFoundError:
+                d.app_stop("com.android.chrome")
+                continue
+            except Exception as e:
+                print("chrome_news: fallback search_box_text failed:", e)
+                d.app_stop("com.android.chrome")
+                continue
         sleep(7)
-        if i == 4:
+
+        if i == 4:  
             sleep(2)
             take_screenshot(d)
             sleep(5)
         else:
             d.app_stop("com.android.chrome")
             go_home(d)
-        elapsed = time.time() - iter_start
     print("chrome_news schedule finished.")
 
 def main():

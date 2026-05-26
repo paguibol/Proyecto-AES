@@ -140,14 +140,40 @@ def chrome_news(d, repetitions=5, interval=60):
         d.app_start("com.android.chrome")
         sleep(2)
         if d(resourceId="com.android.chrome:id/url_bar").exists:
-            d(resourceId="com.android.chrome:id/url_bar").click()
-            sleep(1)
-            d(resourceId="com.android.chrome:id/url_bar").set_text("news")
-            d.press("enter")
+            try:
+                d(resourceId="com.android.chrome:id/url_bar").click()
+                sleep(1)
+                try:
+                    d(resourceId="com.android.chrome:id/url_bar").set_text("news")
+                except Exception:
+                    try:
+                        d.shell('input text news')
+                    except Exception as e:
+                        print("chrome_news: adb input text failed for url_bar:", e)
+                d.press("enter")
+            except Exception as e:
+                print("chrome_news: url_bar click/set_text failed:", e)
+                pass
         else:
-            d.app_stop("com.android.chrome")
-            continue
-
+            try:
+                if d(resourceId="com.android.chrome:id/search_box_text").wait(timeout=5):
+                    d(resourceId="com.android.chrome:id/search_box_text").click()
+                    sleep(1)
+                    try:
+                        d(resourceId="com.android.chrome:id/search_box_text").set_text("news")
+                    except Exception:
+                        try:
+                            d.shell('input text news')
+                        except Exception as e:
+                            print("chrome_news: adb input text failed for search_box_text:", e)
+                    d.press("enter")
+                else:
+                    d.app_stop("com.android.chrome")
+                    continue
+            except Exception as e:
+                print("chrome_news: fallback search_box_text failed:", e)
+                d.app_stop("com.android.chrome")
+                continue
         sleep(7)
         go_home(d)
         d.app_stop("com.android.chrome")
