@@ -198,7 +198,7 @@ def Messenger(d, destination_contact, repetitions=20, interval=60):
 
 def main():
     connection()
-    sleep(300)
+    sleep(300) 
     d = u2.connect()
     destination_contact = get_userf()
     interval = get_cfg("MESSENGER_INTERVAL")

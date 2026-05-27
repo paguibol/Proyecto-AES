@@ -193,7 +193,7 @@ def chrome_news(d, repetitions=5, interval=60):
 
 def main():
     connection()
-    sleep(250)
+    sleep(300)
     d = u2.connect()
     interval = get_cfg("INTERNET_INTERVAL")
     reps     = get_cfg("INTERNET_REPS")

@@ -272,7 +272,7 @@ def Twitter(d, repetitions=20, interval=60):
             print("No se encontró el botón Enviar.")
 
         sleep(10)
-        if i == 1:
+        if i == 4:
             sleep(2)
             tech, network, path = take_screenshot(d)
             sleep(2)
@@ -285,7 +285,7 @@ def Twitter(d, repetitions=20, interval=60):
             
 def main():
     connection()
-#   sleep(250)
+    sleep(300)
     d = u2.connect()
     interval = get_cfg("TWITTER_INTERVAL")
     reps     = get_cfg("TWITTER_REPS")

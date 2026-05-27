@@ -191,7 +191,7 @@ def Gmail(d, destination_email, repetitions=20, interval=60):
 
 def main():
     connection()
-    sleep(300)
+    sleep(300) 
     d = u2.connect()
     destination_email = destination()
     interval = get_cfg("GMAIL_INTERVAL")
