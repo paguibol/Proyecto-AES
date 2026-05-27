@@ -12,18 +12,18 @@ from openpyxl.drawing.image import Image
 # Mode-specific defaults. AES_MODE controls which set is active in a child process.
 DEFAULTS_BY_MODE = {
     "SIN_SALDO": {
-        "MMS_REPS":       2, #5
-        "MMS_INTERVAL":   10, #60
-        "INTERNET_REPS":  2, #5
-        "INTERNET_INTERVAL": 10, #60
-        "YT_REPS":        2, #5
-        "YT_INTERVAL":    10, #60
-        "GMAIL_REPS":     2, #5
-        "GMAIL_INTERVAL": 10, #60
-        "TWITTER_REPS":   2, #5
-        "TWITTER_INTERVAL": 10, #60
-        "MESSENGER_REPS": 2, #5
-        "MESSENGER_INTERVAL": 10, #60
+        "MMS_REPS":       5, #5
+        "MMS_INTERVAL":   60, #60
+        "INTERNET_REPS":  5, #5
+        "INTERNET_INTERVAL": 60, #60
+        "YT_REPS":        5, #5
+        "YT_INTERVAL":    60, #60
+        "GMAIL_REPS":     5, #5
+        "GMAIL_INTERVAL": 60, #60
+        "TWITTER_REPS":   5, #5
+        "TWITTER_INTERVAL": 60, #60
+        "MESSENGER_REPS": 5, #5
+        "MESSENGER_INTERVAL": 60, #60
     },
     "PREPAGO": {
         "MMS_REPS":       20,

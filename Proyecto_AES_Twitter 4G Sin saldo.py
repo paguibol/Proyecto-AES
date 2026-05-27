@@ -273,7 +273,7 @@ def Twitter(d, repetitions=20, interval=60):
             print("No se encontró el botón Enviar.")
 
         sleep(10)
-        if i == 1:
+        if i == 4:
             sleep(2)
             tech, network, path = take_screenshot(d)
             sleep(2)

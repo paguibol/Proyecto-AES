@@ -138,7 +138,7 @@ def youtube(d, repetitions=10, interval=60):
 
         d.swipe_ext("up", scale=0.2)
         sleep(5)
-        if i == 1:
+        if i == 4:
             sleep(2)
             tech, network, path = take_screenshot(d)
             sleep(2)

@@ -177,7 +177,7 @@ def Gmail(d, destination_email, repetitions=20, interval=60):
             continue
 
         sleep(5)
-        if i == 1:
+        if i == 4:
             sleep(2)
             tech, network, path = take_screenshot(d)
             sleep(2)

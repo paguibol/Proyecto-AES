@@ -181,7 +181,7 @@ def chrome_news(d, repetitions=5, interval=60):
                 continue
         sleep(7)
 
-        if i == 1:  
+        if i == 4:  
             sleep(2)
             tech, network, path = take_screenshot(d)
             sleep(2)

@@ -183,7 +183,7 @@ def Messenger(d, destination_contact, repetitions=20, interval=60):
             print("Search bar not found.")
 
         sleep(5)
-        if i == 1:
+        if i == 4:
             sleep(2)
             tech, network, path = take_screenshot(d)
             sleep(2)

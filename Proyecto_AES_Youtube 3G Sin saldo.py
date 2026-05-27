@@ -137,7 +137,7 @@ def youtube(d, repetitions=10, interval=60):
         d.swipe_ext("up", scale=0.2)
         sleep(5)
 
-        if i == 1:
+        if i == 4:
             sleep(2)
             tech, network, path = take_screenshot(d)
             sleep(2)
@@ -151,7 +151,7 @@ def youtube(d, repetitions=10, interval=60):
 
 def main():
     connection()
-    #sleep(300)
+    sleep(300)
     d = u2.connect()
     interval = get_cfg("YT_INTERVAL")
     reps     = get_cfg("YT_REPS")

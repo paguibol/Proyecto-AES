@@ -285,7 +285,7 @@ def Twitter(d, repetitions=20, interval=60):
             
 def main():
     connection()
-#    sleep(250)
+#   sleep(250)
     d = u2.connect()
     interval = get_cfg("TWITTER_INTERVAL")
     reps     = get_cfg("TWITTER_REPS")
